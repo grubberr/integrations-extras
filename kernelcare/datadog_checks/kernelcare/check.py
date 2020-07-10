@@ -1,5 +1,5 @@
-
 import requests
+
 from datadog_checks.base import AgentCheck, ConfigurationError
 
 
@@ -29,6 +29,9 @@ class KernelcareCheck(AgentCheck):
 
         response = requests.get(url)
         response.raise_for_status()
+
+        if response.text.startswith('Servers not found for key'):
+            raise ConfigurationError('Configuration error, `key` not found')
 
         data = self._parse_nagios_response(response.text)
 
