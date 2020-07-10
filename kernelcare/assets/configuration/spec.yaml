@@ -7,4 +7,10 @@ files:
     - template: init_config/default
   - template: instances
     options:
+    - name: key
+      required: true
+      description: |
+        kernelcare license key
+      value:
+        type: string
     - template: instances/default
