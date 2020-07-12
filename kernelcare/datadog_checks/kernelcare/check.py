@@ -15,7 +15,7 @@ class KernelcareCheck(AgentCheck):
 
         res = {}
         for p in params.split(';'):
-            k, v = p.split('=')
+            k, v = p.split('=', 1)
             res[k] = int(v)
         return res
 
@@ -34,9 +34,16 @@ class KernelcareCheck(AgentCheck):
         if response.text.startswith('Servers not found for key'):
             raise CheckException(response.text)
 
-        data = self._parse_nagios_response(response.text)
+        try:
+            data = self._parse_nagios_response(response.text)
+        except ValueError:
+            raise CheckException('Kernelcare API: Invalid Response')
 
-        self.gauge('kernelcare.uptodate', data['uptodate'])
-        self.gauge('kernelcare.outofdate', data['outofdate'])
-        self.gauge('kernelcare.unsupported', data['unsupported'])
-        self.gauge('kernelcare.inactive', data['inactive'])
+        if 'uptodate' in data:
+            self.gauge('kernelcare.uptodate', data['uptodate'])
+        if 'outofdate' in data:
+            self.gauge('kernelcare.outofdate', data['outofdate'])
+        if 'unsupported' in data:
+            self.gauge('kernelcare.unsupported', data['unsupported'])
+        if 'inactive' in data:
+            self.gauge('kernelcare.inactive', data['inactive'])
