@@ -1,8 +1,22 @@
 import pytest
 import requests
 
+from datadog_checks.base import ConfigurationError
 from datadog_checks.base.errors import CheckException
 from datadog_checks.kernelcare import KernelcareCheck
+
+
+@pytest.mark.unit
+def test_config():
+
+    instance = {}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+
+    with pytest.raises(ConfigurationError):
+        c.check(instance)
+
+    with pytest.raises(ConfigurationError):
+        c.check({'key': ''})
 
 
 @pytest.mark.integration
