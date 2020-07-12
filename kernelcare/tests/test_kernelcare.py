@@ -1,5 +1,6 @@
 import pytest
 
+from datadog_checks.base.errors import CheckException
 from datadog_checks.kernelcare import KernelcareCheck
 
 
@@ -8,7 +9,12 @@ def test_metric(aggregator, dd_environment, monkeypatch):
 
     monkeypatch.setattr(KernelcareCheck, 'KEY_KCARE_NAGIOS_ENDPOINT', dd_environment['URL'], raising=True)
 
-    instance = {'key': dd_environment['KERNELCARE_KEY']}
+    instance = {'key': dd_environment['KEY_FAIL']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+    with pytest.raises(CheckException):
+        c.check(instance)
+
+    instance = {'key': dd_environment['KEY_OK']}
     c = KernelcareCheck('kernelcare', {}, [instance])
     c.check(instance)
 

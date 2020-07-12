@@ -10,9 +10,10 @@ def dd_environment():
 
     compose_file = os.path.join(get_here(), 'docker', 'docker-compose.yml')
 
-    KERNELCARE_KEY = 'KernelCareKey'
+    KEY_OK = 'KernelCareKey'
+    KEY_FAIL = 'NotFoundKey'
     URL = 'http://{}:8000/'.format(get_docker_hostname())
-    endpoint = URL + KERNELCARE_KEY
+    endpoints = [URL + KEY_OK, URL + KEY_FAIL]
 
-    with docker_run(compose_file, endpoints=[endpoint]):
-        yield {'KERNELCARE_KEY': KERNELCARE_KEY, 'URL': URL}
+    with docker_run(compose_file, endpoints=endpoints):
+        yield {'KEY_OK': KEY_OK, 'KEY_FAIL': KEY_FAIL, 'URL': URL}
