@@ -13,10 +13,21 @@ init_config:
 #
 instances:
 
-    ## @param key - string - required
-    ## kernelcare license key
+  -
+    ## @param key - string - optional
+    ## Kernelcare license key
     #
-  - key: <KEY>
+    # key: <KEY>
+
+    ## @param login - string - optional
+    ## Kernelcare login
+    #
+    # login: <LOGIN>
+
+    ## @param api_token - string - optional
+    ## Kernelcare API security token
+    #
+    # api_token: <API_TOKEN>
 
     ## @param tags - list of strings - optional
     ## A list of tags to attach to every metric and service check emitted by this instance.

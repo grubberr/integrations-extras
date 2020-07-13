@@ -43,7 +43,7 @@ class KernelcareCheck(AgentCheck):
         if login and api_token:
             return self.RES_KCARE_NAGIOS_ENDPOINT + login + '/' + api_token
 
-        raise ConfigurationError('Configuration error, you must provide `key` or `login`')
+        raise ConfigurationError('Configuration error, you must provide `key` or `login` & `api_token`')
 
     def check(self, instance):
 
