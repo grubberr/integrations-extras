@@ -12,11 +12,14 @@ def test_config():
     instance = {}
     c = KernelcareCheck('kernelcare', {}, [instance])
 
-    with pytest.raises(ConfigurationError):
+    with pytest.raises(ConfigurationError, match='^Configuration error.+'):
         c.check(instance)
 
-    with pytest.raises(ConfigurationError):
+    with pytest.raises(ConfigurationError, match='^Configuration error.+'):
         c.check({'key': ''})
+
+    with pytest.raises(ConfigurationError, match='^Configuration error.+'):
+        c.check({'login': '', 'api_token': ''})
 
 
 @pytest.mark.integration
