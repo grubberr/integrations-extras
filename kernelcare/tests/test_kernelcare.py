@@ -26,23 +26,25 @@ def test_config():
 def test_metric(aggregator, dd_environment, monkeypatch):
 
     URL = dd_environment['URL']
-    instance_ok = {'key': dd_environment['KEY']}
-    instance_fail = {'key': dd_environment['KEY_NOT_FOUND']}
 
     with monkeypatch.context() as m:
         m.setattr(KernelcareCheck, 'KEY_KCARE_NAGIOS_ENDPOINT', URL + '/notfound/', raising=True)
-        c = KernelcareCheck('kernelcare', {}, [instance_ok])
+        instance = {'key': dd_environment['KEY']}
+        c = KernelcareCheck('kernelcare', {}, [instance])
         with pytest.raises(requests.HTTPError):
-            c.check(instance_ok)
+            c.check(instance)
 
     monkeypatch.setattr(KernelcareCheck, 'KEY_KCARE_NAGIOS_ENDPOINT', URL, raising=True)
+    monkeypatch.setattr(KernelcareCheck, 'RES_KCARE_NAGIOS_ENDPOINT', URL, raising=True)
 
-    c = KernelcareCheck('kernelcare', {}, [instance_fail])
+    instance = {'key': dd_environment['KEY_NOT_FOUND']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
     with pytest.raises(CheckException):
-        c.check(instance_fail)
+        c.check(instance)
 
-    c = KernelcareCheck('kernelcare', {}, [instance_ok])
-    c.check(instance_ok)
+    instance = {'key': dd_environment['KEY']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+    c.check(instance)
 
     aggregator.assert_metric('kernelcare.uptodate', value=6, metric_type=aggregator.GAUGE)
     aggregator.assert_metric('kernelcare.outofdate', value=3, metric_type=aggregator.GAUGE)
