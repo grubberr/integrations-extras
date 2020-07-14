@@ -26,8 +26,8 @@ def test_config():
 def test_metric(aggregator, dd_environment, monkeypatch):
 
     URL = dd_environment['URL']
-    instance_ok = {'key': dd_environment['KEY_OK']}
-    instance_fail = {'key': dd_environment['KEY_FAIL']}
+    instance_ok = {'key': dd_environment['KEY']}
+    instance_fail = {'key': dd_environment['KEY_NOT_FOUND']}
 
     with monkeypatch.context() as m:
         m.setattr(KernelcareCheck, 'KEY_KCARE_NAGIOS_ENDPOINT', URL + '/notfound/', raising=True)
