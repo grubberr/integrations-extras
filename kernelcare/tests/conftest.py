@@ -12,12 +12,19 @@ def dd_environment():
 
     KEY = 'Key'
     KEY_NOT_FOUND = 'Key-NotFound'
+    LOGIN = 'Login'
+    LOGIN_NOT_FOUND = 'Login-NotFound'
+    API_TOKEN = 'ApiToken'
+    API_TOKEN_NOT_FOUND = 'ApiToken-NotFound'
 
     URL = 'http://{}:8000/'.format(get_docker_hostname())
 
     endpoints = [
         URL + KEY,
         URL + KEY_NOT_FOUND,
+        URL + LOGIN + '/' + API_TOKEN,
+        URL + LOGIN_NOT_FOUND + '/' + API_TOKEN,
+        URL + LOGIN + '/' + API_TOKEN_NOT_FOUND,
     ]
 
     with docker_run(compose_file, endpoints=endpoints):
@@ -25,4 +32,8 @@ def dd_environment():
             'URL': URL,
             'KEY': KEY,
             'KEY_NOT_FOUND': KEY_NOT_FOUND,
+            'LOGIN': LOGIN,
+            'LOGIN_NOT_FOUND': LOGIN_NOT_FOUND,
+            'API_TOKEN': API_TOKEN,
+            'API_TOKEN_NOT_FOUND': API_TOKEN_NOT_FOUND,
         }
