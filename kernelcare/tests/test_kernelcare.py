@@ -39,7 +39,7 @@ def test_metric(aggregator, dd_environment, monkeypatch):
 
     instance = {'key': dd_environment['KEY_NOT_FOUND']}
     c = KernelcareCheck('kernelcare', {}, [instance])
-    with pytest.raises(CheckException):
+    with pytest.raises(CheckException, match='^Servers not found for key.+'):
         c.check(instance)
 
     instance = {'key': dd_environment['KEY']}
@@ -50,3 +50,24 @@ def test_metric(aggregator, dd_environment, monkeypatch):
     aggregator.assert_metric('kernelcare.outofdate', value=3, metric_type=aggregator.GAUGE)
     aggregator.assert_metric('kernelcare.unsupported', value=2, metric_type=aggregator.GAUGE)
     aggregator.assert_metric('kernelcare.inactive', value=1, metric_type=aggregator.GAUGE)
+
+    aggregator.reset()
+
+    instance = {'login': dd_environment['LOGIN_NOT_FOUND'], 'api_token': dd_environment['API_TOKEN']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+    with pytest.raises(CheckException, match='^Reseller not found$'):
+        c.check(instance)
+
+    instance = {'login': dd_environment['LOGIN'], 'api_token': dd_environment['API_TOKEN_NOT_FOUND']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+    with pytest.raises(CheckException, match='^Registration token not found for reseller.+'):
+        c.check(instance)
+
+    instance = {'login': dd_environment['LOGIN'], 'api_token': dd_environment['API_TOKEN']}
+    c = KernelcareCheck('kernelcare', {}, [instance])
+    c.check(instance)
+
+    aggregator.assert_metric('kernelcare.uptodate', value=9, metric_type=aggregator.GAUGE)
+    aggregator.assert_metric('kernelcare.outofdate', value=1, metric_type=aggregator.GAUGE)
+    aggregator.assert_metric('kernelcare.unsupported', value=3, metric_type=aggregator.GAUGE)
+    aggregator.assert_metric('kernelcare.inactive', value=2, metric_type=aggregator.GAUGE)
